@@ -1,40 +1,54 @@
 // OpenGLSetup.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
 
-#include <iostream>
-#include <GL/freeglut.h>
+#include "includes.h"
 
 // the window's width and height
 int width, height;
 
-// the three vertices of a triangle
-float v0[2];
-float v1[2];
-float v2[2];
+// create vector to store shapes
+std::vector<Drawing*> shapes;
+
+Drawing intermediateDrawing;
 
 
 void createTriangle()
 {
-    // initialize the triangle's vertices
-    v0[0] = 0.0f;
-    v0[1] = 0.0f;
-    v1[0] = 5.0f;
-    v1[1] = 0.0f;
-    v2[0] = 2.5f;
-    v2[1] = 3.0f;
+    Drawing* tri = new Drawing();
+
+    tri->AddVertex(0.f, 0.f);
+    tri->AddVertex(5.f, 0.f);
+    tri->AddVertex(2.5f, 3.f);
+    shapes.push_back(tri);
+}
+
+void createRectangle()
+{
+    Drawing* rect = new Drawing();
+
+    rect->AddVertex(5.f, 0.f);
+    rect->AddVertex(5.f, 2.5f);
+    rect->AddVertex(7.5f, 2.5f);
+    rect->AddVertex(7.5f, 0.f);
+    shapes.push_back(rect);
 }
 
 void init(void)
 {
     // initialize the size of the window
+    std::cout << &shapes << std::endl;
+    callbacks::Init();
     width = 600;
     height = 600;
     createTriangle();
+    createRectangle();
 }
 
 // called when the GL context need to be rendered
 void display(void)
 {
+    std::cout << "called display" << std::endl;
+    std::cout << shapes.size() << std::endl;
     // clear the screen to white, which is the background color
     glClearColor(1.0, 1.0, 1.0, 0.0);
 
@@ -49,11 +63,24 @@ void display(void)
     glColor3f(1.0, 0.0, 0.0);
 
     // this is immedidate mode of OpenGL usded prior to OpenGL 3.0
-    glBegin(GL_TRIANGLES);
-    glVertex2fv(v0);
+    /*glBegin(tri.GetMode());
+    /*glVertex2fv(v0);
     glVertex2fv(v1);
     glVertex2fv(v2);
-    glEnd();
+    glVertex2fv(tri.verticies[0]);
+    glVertex2fv(tri.verticies[1]);
+    glVertex2fv(tri.verticies[2]);
+    glEnd();*/
+
+    for (int i = 0; i < shapes.size(); i++) {
+        glBegin(shapes[i]->GetMode());
+        for (int j = 0; j < shapes[i]->verticies.size(); j++) {
+            glVertex2fv(shapes[i]->verticies[j]);
+            //std::cout << *(shapes[i]->verticies[j]) << std::endl;
+        }
+        glEnd();
+    }
+    
 
     // specify the color for new drawing
     glColor3f(0.0, 0.0, 1.0);
@@ -116,8 +143,15 @@ int main(int argc, char* argv[])
     //register function that draws in the window
     glutDisplayFunc(display);
 
+    glutMouseFunc(callbacks::Mouse);
+
+
     //start the glut main loop
     glutMainLoop();
+
+    for (int i = 0; i < shapes.size(); i++) {
+        delete shapes[i];
+    }
 
     return 0;
 }
