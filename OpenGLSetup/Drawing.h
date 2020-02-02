@@ -7,7 +7,7 @@ public:
 	std::vector<float*> verticies;
 	void AddVertex(float x, float y);
 	~Drawing();
-	GLenum GetMode();
+	GLenum GetMode(int offset = 0);
 private:
 	void Sort();
 };

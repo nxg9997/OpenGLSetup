@@ -1,7 +1,6 @@
 ﻿  OpenGLSetup.cpp
-D:\RIT\GGP\Project1\OpenGLSetup\OpenGLSetup\OpenGLSetup.cpp(75,23): warning C4018: '<': signed/unsigned mismatch
-D:\RIT\GGP\Project1\OpenGLSetup\OpenGLSetup\OpenGLSetup.cpp(77,27): warning C4018: '<': signed/unsigned mismatch
-D:\RIT\GGP\Project1\OpenGLSetup\OpenGLSetup\OpenGLSetup.cpp(152,23): warning C4018: '<': signed/unsigned mismatch
-  callbacks.cpp
-  Generating Code...
-  OpenGLSetup.vcxproj -> D:\RIT\GGP\Project1\OpenGLSetup\Debug\OpenGLSetup.exe
+f:\projects\openglsetup\openglsetup\openglsetup.cpp(78): warning C4018: '<': signed/unsigned mismatch
+f:\projects\openglsetup\openglsetup\openglsetup.cpp(80): warning C4018: '<': signed/unsigned mismatch
+f:\projects\openglsetup\openglsetup\openglsetup.cpp(93): warning C4018: '<': signed/unsigned mismatch
+f:\projects\openglsetup\openglsetup\openglsetup.cpp(174): warning C4018: '<': signed/unsigned mismatch
+  OpenGLSetup.vcxproj -> F:\Projects\OpenGLSetup\Debug\OpenGLSetup.exe

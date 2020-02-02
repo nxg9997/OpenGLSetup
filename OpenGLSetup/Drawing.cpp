@@ -16,15 +16,15 @@ Drawing::~Drawing()
 	}
 }
 
-GLenum Drawing::GetMode()
+GLenum Drawing::GetMode(int offset)
 {
-	switch (verticies.size()) {
+	switch (verticies.size() + offset) {
 	case 0:
-		return GL_POINT;
+		return GL_POINTS;
 	case 1:
-		return GL_POINT;
+		return GL_POINTS;
 	case 2:
-		return GL_LINE;
+		return GL_LINES;
 	case 3:
 		return GL_TRIANGLES;
 	case 4:

@@ -9,9 +9,10 @@ int width, height;
 // create vector to store shapes
 std::vector<Drawing*> shapes;
 
-Drawing intermediateDrawing;
+//used to draw shape before it is finalized
+Drawing* intermediateDrawing = nullptr;
 
-
+//test function for tri drawing
 void createTriangle()
 {
     Drawing* tri = new Drawing();
@@ -22,6 +23,7 @@ void createTriangle()
     shapes.push_back(tri);
 }
 
+//test function for drawing rects
 void createRectangle()
 {
     Drawing* rect = new Drawing();
@@ -33,6 +35,7 @@ void createRectangle()
     shapes.push_back(rect);
 }
 
+//initiallize application
 void init(void)
 {
     // initialize the size of the window
@@ -40,15 +43,15 @@ void init(void)
     callbacks::Init();
     width = 600;
     height = 600;
-    createTriangle();
-    createRectangle();
+    //createTriangle();
+    //createRectangle();
 }
 
 // called when the GL context need to be rendered
 void display(void)
 {
-    std::cout << "called display" << std::endl;
-    std::cout << shapes.size() << std::endl;
+    //std::cout << "called display" << std::endl;
+    //std::cout << shapes.size() << std::endl;
     // clear the screen to white, which is the background color
     glClearColor(1.0, 1.0, 1.0, 0.0);
 
@@ -80,17 +83,33 @@ void display(void)
         }
         glEnd();
     }
+
+	//intermediate
+	
+	intermediateDrawing = (Drawing*)callbacks::currentPointer;
+	if (intermediateDrawing != nullptr)
+	{
+		glBegin(intermediateDrawing->GetMode(1));
+		for (int j = 0; j < intermediateDrawing->verticies.size(); j++)
+		{
+			glVertex2fv(intermediateDrawing->verticies[j]);
+			//std::cout << *(shapes[i]->verticies[j]) << std::endl;
+		}
+		glVertex2fv(callbacks::mousePos);
+		glEnd();
+	}
+	
     
 
     // specify the color for new drawing
     glColor3f(0.0, 0.0, 1.0);
 
     // draw the origin of the canvas
-    glPointSize(30.0f);
+    /*glPointSize(30.0f);
     glBegin(GL_POINTS);
     glVertex2f(0.0f, 0.0f);
     glEnd();
-    glPointSize(1.0f);
+    glPointSize(1.0f);*/
 
     glutSwapBuffers();
 }
@@ -144,7 +163,10 @@ int main(int argc, char* argv[])
     glutDisplayFunc(display);
 
     glutMouseFunc(callbacks::Mouse);
-
+	glutPassiveMotionFunc(callbacks::PassiveMouse);
+	glutKeyboardFunc(callbacks::Keyboard);
+	/*glLineWidth(10.f);
+	glPointSize(10.f);*/
 
     //start the glut main loop
     glutMainLoop();
