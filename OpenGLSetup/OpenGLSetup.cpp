@@ -2,6 +2,7 @@
 //
 
 #include "includes.h"
+#include <Windows.h>
 
 // the window's width and height
 int width, height;
@@ -123,6 +124,7 @@ void reshape(int w, int h)
 
 int main(int argc, char* argv[])
 {
+    ::ShowWindow(::GetConsoleWindow(), SW_HIDE);
     init();
     glutInit(&argc, argv);
 

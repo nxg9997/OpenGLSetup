@@ -1,3 +1,10 @@
-﻿  callbacks.cpp
-D:\RIT\GGP\Project1\OpenGLSetup\OpenGLSetup\callbacks.cpp(204,22): warning C4018: '<': signed/unsigned mismatch
+﻿  OpenGLSetup.cpp
+D:\RIT\GGP\Project1\OpenGLSetup\OpenGLSetup\OpenGLSetup.cpp(67,23): warning C4018: '<': signed/unsigned mismatch
+D:\RIT\GGP\Project1\OpenGLSetup\OpenGLSetup\OpenGLSetup.cpp(70,30): warning C4244: 'argument': conversion from 'int' to 'GLfloat', possible loss of data
+D:\RIT\GGP\Project1\OpenGLSetup\OpenGLSetup\OpenGLSetup.cpp(71,30): warning C4244: 'argument': conversion from 'int' to 'GLfloat', possible loss of data
+D:\RIT\GGP\Project1\OpenGLSetup\OpenGLSetup\OpenGLSetup.cpp(73,27): warning C4018: '<': signed/unsigned mismatch
+D:\RIT\GGP\Project1\OpenGLSetup\OpenGLSetup\OpenGLSetup.cpp(85,32): warning C4244: 'argument': conversion from 'int' to 'GLfloat', possible loss of data
+D:\RIT\GGP\Project1\OpenGLSetup\OpenGLSetup\OpenGLSetup.cpp(86,32): warning C4244: 'argument': conversion from 'int' to 'GLfloat', possible loss of data
+D:\RIT\GGP\Project1\OpenGLSetup\OpenGLSetup\OpenGLSetup.cpp(88,21): warning C4018: '<': signed/unsigned mismatch
+D:\RIT\GGP\Project1\OpenGLSetup\OpenGLSetup\OpenGLSetup.cpp(153,23): warning C4018: '<': signed/unsigned mismatch
   OpenGLSetup.vcxproj -> D:\RIT\GGP\Project1\OpenGLSetup\Debug\OpenGLSetup.exe
