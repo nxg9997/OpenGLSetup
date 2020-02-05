@@ -39,7 +39,7 @@ void createRectangle()
 void init(void)
 {
     // initialize the size of the window
-    std::cout << &shapes << std::endl;
+    //std::cout << &shapes << std::endl;
     callbacks::Init();
     width = 600;
     height = 600;
@@ -62,20 +62,12 @@ void display(void)
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-    // specify the color for drawing
-    glColor3f(1.0, 0.0, 0.0);
-
-    // this is immedidate mode of OpenGL usded prior to OpenGL 3.0
-    /*glBegin(tri.GetMode());
-    /*glVertex2fv(v0);
-    glVertex2fv(v1);
-    glVertex2fv(v2);
-    glVertex2fv(tri.verticies[0]);
-    glVertex2fv(tri.verticies[1]);
-    glVertex2fv(tri.verticies[2]);
-    glEnd();*/
-
+    // loop thru and draw all the shapes
     for (int i = 0; i < shapes.size(); i++) {
+        // specify the color for drawing
+        glColor3f(COLORTOGL(shapes[i]->color[0]), COLORTOGL(shapes[i]->color[1]), COLORTOGL(shapes[i]->color[2]));
+        glLineWidth(shapes[i]->lineWidth);
+        glPointSize(shapes[i]->pointSize);
         glBegin(shapes[i]->GetMode());
         for (int j = 0; j < shapes[i]->verticies.size(); j++) {
             glVertex2fv(shapes[i]->verticies[j]);
@@ -84,11 +76,13 @@ void display(void)
         glEnd();
     }
 
-	//intermediate
-	
+	// draw the intermediate shape (the one currently being drawn by the user)
 	intermediateDrawing = (Drawing*)callbacks::currentPointer;
 	if (intermediateDrawing != nullptr)
 	{
+        glColor3f(COLORTOGL(callbacks::color[0]), COLORTOGL(callbacks::color[1]), COLORTOGL(callbacks::color[2]));
+        glLineWidth(callbacks::lineWidth);
+        glPointSize(callbacks::pointSize);
 		glBegin(intermediateDrawing->GetMode(1));
 		for (int j = 0; j < intermediateDrawing->verticies.size(); j++)
 		{
@@ -103,13 +97,6 @@ void display(void)
 
     // specify the color for new drawing
     glColor3f(0.0, 0.0, 1.0);
-
-    // draw the origin of the canvas
-    /*glPointSize(30.0f);
-    glBegin(GL_POINTS);
-    glVertex2f(0.0f, 0.0f);
-    glEnd();
-    glPointSize(1.0f);*/
 
     glutSwapBuffers();
 }
@@ -136,41 +123,31 @@ void reshape(int w, int h)
 
 int main(int argc, char* argv[])
 {
-    // before create a glut window,
-    // initialize stuff not opengl/glut dependent
     init();
-
-    //initialize GLUT, let it extract command-line GLUT options that you may provide
-    //NOTE that the '&' before argc
     glutInit(&argc, argv);
 
-    // specify as double bufferred can make the display faster
-    // Color is speicfied to RGBA, four color channels with Red, Green, Blue and Alpha(depth)
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
 
-    //set the initial window size */
+    // initialize the window
     glutInitWindowSize((int)width, (int)height);
-
-    // create the window with a title
-    glutCreateWindow("First OpenGL Program");
-
-    /* --- register callbacks with GLUT --- */
+    glutCreateWindow("IGME740 - Project 1 - Nathan Glick");
 
     //register function to handle window resizes
     glutReshapeFunc(reshape);
 
-    //register function that draws in the window
+    // setup callbacks
     glutDisplayFunc(display);
-
     glutMouseFunc(callbacks::Mouse);
 	glutPassiveMotionFunc(callbacks::PassiveMouse);
 	glutKeyboardFunc(callbacks::Keyboard);
-	/*glLineWidth(10.f);
-	glPointSize(10.f);*/
+
+    // create the right-click menu
+    callbacks::CreateMenu();
 
     //start the glut main loop
     glutMainLoop();
 
+    // clean up memory
     for (int i = 0; i < shapes.size(); i++) {
         delete shapes[i];
     }
