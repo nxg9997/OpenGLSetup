@@ -16,7 +16,7 @@ public:
 	mat4			mvMat;
     mat4			projMat;
 
-private:
+public:
     float           fovy;              // view angle 
     float           aspect;            // the window ration equal to w/h
     float           near_plane;
@@ -95,7 +95,7 @@ public:
 	// function to see if camera is changed
 	bool IsChanged();
 
-private: 
+public: 
     void horizontalRotate();    // for focus cam mode
 	void verticalRotate();      // for focus cam mode
     void GetCamCS();

@@ -11,4 +11,74 @@
   GLM: yaw function returning degrees is deprecated. #define GLM_FORCE_RADIANS before including GLM headers to remove this message.
   GLM: angle function returning degrees is deprecated. #define GLM_FORCE_RADIANS before including GLM headers to remove this message.
   GLM: angleAxis function taking degrees as a parameter is deprecated. #define GLM_FORCE_RADIANS before including GLM headers to remove this message.
-  OpenGLSetup.vcxproj -> F:\Projects\OpenGLSetup\Debug\OpenGLSetup.exe
+  main.cpp
+  GLM: rotate function taking degrees as a parameter is deprecated. #define GLM_FORCE_RADIANS before including GLM headers to remove this message.
+  GLM: rotate_slow function taking degrees as a parameter is deprecated. #define GLM_FORCE_RADIANS before including GLM headers to remove this message.
+  GLM: perspective function taking degrees as a parameter is deprecated. #define GLM_FORCE_RADIANS before including GLM headers to remove this message.
+  GLM: perspectiveFov function taking degrees as a parameter is deprecated. #define GLM_FORCE_RADIANS before including GLM headers to remove this message.
+  GLM: infinitePerspective function taking degrees as a parameter is deprecated. #define GLM_FORCE_RADIANS before including GLM headers to remove this message.
+  GLM: tweakedInfinitePerspective function taking degrees as a parameter is deprecated. #define GLM_FORCE_RADIANS before including GLM headers to remove this message.
+  GLM: rotate function taking degrees as a parameter is deprecated. #define GLM_FORCE_RADIANS before including GLM headers to remove this message.
+  GLM: roll function returning degrees is deprecated. #define GLM_FORCE_RADIANS before including GLM headers to remove this message.
+  GLM: pitch function returning degrees is deprecated. #define GLM_FORCE_RADIANS before including GLM headers to remove this message.
+  GLM: yaw function returning degrees is deprecated. #define GLM_FORCE_RADIANS before including GLM headers to remove this message.
+  GLM: angle function returning degrees is deprecated. #define GLM_FORCE_RADIANS before including GLM headers to remove this message.
+  GLM: angleAxis function taking degrees as a parameter is deprecated. #define GLM_FORCE_RADIANS before including GLM headers to remove this message.
+D:\RIT\GGP\Project1\OpenGLSetup\OpenGLSetup\src\main.cpp(139,35): warning C4018: '<': signed/unsigned mismatch
+D:\RIT\GGP\Project1\OpenGLSetup\OpenGLSetup\src\main.cpp(170,35): warning C4018: '<': signed/unsigned mismatch
+  GLM: rotate function taking degrees as a parameter is deprecated. #define GLM_FORCE_RADIANS before including GLM headers to remove this message.
+  pixels.cpp
+  GLM: rotate function taking degrees as a parameter is deprecated. #define GLM_FORCE_RADIANS before including GLM headers to remove this message.
+  GLM: rotate_slow function taking degrees as a parameter is deprecated. #define GLM_FORCE_RADIANS before including GLM headers to remove this message.
+  GLM: perspective function taking degrees as a parameter is deprecated. #define GLM_FORCE_RADIANS before including GLM headers to remove this message.
+  GLM: perspectiveFov function taking degrees as a parameter is deprecated. #define GLM_FORCE_RADIANS before including GLM headers to remove this message.
+  GLM: infinitePerspective function taking degrees as a parameter is deprecated. #define GLM_FORCE_RADIANS before including GLM headers to remove this message.
+  GLM: tweakedInfinitePerspective function taking degrees as a parameter is deprecated. #define GLM_FORCE_RADIANS before including GLM headers to remove this message.
+  GLM: rotate function taking degrees as a parameter is deprecated. #define GLM_FORCE_RADIANS before including GLM headers to remove this message.
+  GLM: roll function returning degrees is deprecated. #define GLM_FORCE_RADIANS before including GLM headers to remove this message.
+  GLM: pitch function returning degrees is deprecated. #define GLM_FORCE_RADIANS before including GLM headers to remove this message.
+  GLM: yaw function returning degrees is deprecated. #define GLM_FORCE_RADIANS before including GLM headers to remove this message.
+  GLM: angle function returning degrees is deprecated. #define GLM_FORCE_RADIANS before including GLM headers to remove this message.
+  GLM: angleAxis function taking degrees as a parameter is deprecated. #define GLM_FORCE_RADIANS before including GLM headers to remove this message.
+D:\RIT\GGP\Project1\OpenGLSetup\OpenGLSetup\src\pixels.cpp(17,9): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+D:\RIT\GGP\Project1\OpenGLSetup\OpenGLSetup\src\pixels.cpp(18,9): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+D:\RIT\GGP\Project1\OpenGLSetup\OpenGLSetup\src\pixels.cpp(18,21): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+D:\RIT\GGP\Project1\OpenGLSetup\OpenGLSetup\src\pixels.cpp(19,14): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+D:\RIT\GGP\Project1\OpenGLSetup\OpenGLSetup\src\pixels.cpp(17,9): warning C4838: conversion from 'int' to 'float' requires a narrowing conversion
+D:\RIT\GGP\Project1\OpenGLSetup\OpenGLSetup\src\pixels.cpp(18,9): warning C4838: conversion from 'int' to 'float' requires a narrowing conversion
+D:\RIT\GGP\Project1\OpenGLSetup\OpenGLSetup\src\pixels.cpp(18,21): warning C4838: conversion from 'int' to 'float' requires a narrowing conversion
+D:\RIT\GGP\Project1\OpenGLSetup\OpenGLSetup\src\pixels.cpp(19,14): warning C4838: conversion from 'int' to 'float' requires a narrowing conversion
+D:\RIT\GGP\Project1\OpenGLSetup\OpenGLSetup\src\pixels.cpp(47,22): warning C4018: '<': signed/unsigned mismatch
+D:\RIT\GGP\Project1\OpenGLSetup\OpenGLSetup\src\pixels.cpp(64,58): warning C4244: '=': conversion from 'T' to 'unsigned char', possible loss of data
+          with
+          [
+              T=float
+          ]
+D:\RIT\GGP\Project1\OpenGLSetup\OpenGLSetup\src\pixels.cpp(65,58): warning C4244: '=': conversion from 'T' to 'unsigned char', possible loss of data
+          with
+          [
+              T=float
+          ]
+D:\RIT\GGP\Project1\OpenGLSetup\OpenGLSetup\src\pixels.cpp(66,58): warning C4244: '=': conversion from 'T' to 'unsigned char', possible loss of data
+          with
+          [
+              T=float
+          ]
+D:\RIT\GGP\Project1\OpenGLSetup\OpenGLSetup\src\pixels.cpp(71,22): warning C4018: '<': signed/unsigned mismatch
+D:\RIT\GGP\Project1\OpenGLSetup\OpenGLSetup\src\pixels.cpp(88,58): warning C4244: '=': conversion from 'T' to 'unsigned char', possible loss of data
+          with
+          [
+              T=float
+          ]
+D:\RIT\GGP\Project1\OpenGLSetup\OpenGLSetup\src\pixels.cpp(89,58): warning C4244: '=': conversion from 'T' to 'unsigned char', possible loss of data
+          with
+          [
+              T=float
+          ]
+D:\RIT\GGP\Project1\OpenGLSetup\OpenGLSetup\src\pixels.cpp(90,58): warning C4244: '=': conversion from 'T' to 'unsigned char', possible loss of data
+          with
+          [
+              T=float
+          ]
+  Generating Code...
+  OpenGLSetup.vcxproj -> D:\RIT\GGP\Project1\OpenGLSetup\Debug\OpenGLSetup.exe

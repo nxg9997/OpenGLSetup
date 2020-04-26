@@ -261,6 +261,7 @@ void initialization()
 	cShader.destroy();
     
 	g_text.setColor(0.0f, 0.0f, 0.0f);
+    createTexture();
 }
 
 /****** GL callbacks ******/
@@ -303,51 +304,25 @@ void display()
 {
     //glFinish();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    
-	/*glEnable(GL_LIGHTING);
-	glLightfv(GL_LIGHT0, GL_POSITION, light0_pos); // commenting out this line to make object always lit up in front of the cam. 
 
-    // adding stuff to draw ...
-
-    
-    // drae sphere and box
-    for (int i=0; i<g_sphere_num; i++)
-        g_spheres[i].Draw();
-    for (int i=0; i<g_box_num; i++)
-        g_boxes[i].Draw();
-
-    // displaying the camera
-    g_cam.drawGrid();
-    g_cam.drawCoordinateOnScreen(g_winWidth, g_winHeight);
-    g_cam.drawCoordinate();
-
-	// displaying the text
-	if(g_cam.isFocusMode()) {
-        string str = "Cam mode: Focus";
-		g_text.draw(10, 30, const_cast<char*>(str.c_str()), g_winWidth, g_winHeight);
-	} else if(g_cam.isFPMode()) {
-        string str = "Cam mode: FP";
-		g_text.draw(10, 30, const_cast<char*>(str.c_str()), g_winWidth, g_winHeight);
-	}
-
-	char s[128];
-	g_text.draw(10, 50, s, g_winWidth, g_winHeight);*/
-
-	createTexture();
+	drawPlane();
 
     glutSwapBuffers();
 }
 
 void reshape(int w, int h)
 {
-	g_winWidth = w;
-	g_winHeight = h;
-	if (h == 0) {
-		h = 1;
-	}
-	g_cam.setProj(g_winWidth, g_winHeight);
-    g_cam.setModelView();
-    glViewport(0, 0, w, h);
+    g_winWidth = w;
+    g_winHeight = h;
+
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluOrtho2D(0.0, 640.0, 0.0, 480.0);
+
+    glViewport(0, 0, (GLsizei)g_winWidth, (GLsizei)g_winHeight);
 }
 
 void mouse(int button, int state, int x, int y)

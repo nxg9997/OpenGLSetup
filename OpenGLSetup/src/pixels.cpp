@@ -11,6 +11,8 @@ extern Sphere * g_spheres;
 
 extern Camera g_cam;
 
+extern Light g_light;
+
 float vertices[4 * 2] = { 0,   0,
 						  g_winWidth, 0,
 						  g_winWidth, g_winHeight,
@@ -29,37 +31,73 @@ void createTexture()
 	imagedata = new unsigned char[g_winWidth * g_winHeight * 3];
 
 	vec3 camInWorld = (vec3)(g_cam.eye * g_cam.mvMat);
-	cout << camInWorld.x << "," << camInWorld.y << "," << camInWorld.z << "," << endl;
+	//cout << camInWorld.x << "," << camInWorld.y << "," << camInWorld.z << "," << endl;
 
-	// assign red color (255, 0 , 0) to each pixel
-	for (int i = 0; i < g_winWidth * g_winHeight; i++)
-	{
-		bool hit = false;
-		for (int j = 0; j < g_sphere_num; j++)
-		{
-			vec3 v = camInWorld + vec3(i, i, -1);
-			vec3 * s_cols = FindCollisionSphere(camInWorld, g_spheres[i].pos, g_spheres[j]);
-			//cout << v.x << "," << v.y << "," << v.z << "," << endl;
+	//int ind = 0;
+	for (int i = 0; i < g_winHeight; i++) {
+		for (int j = 0; j < g_winWidth; j++) {
 
-			if (s_cols != nullptr)
-			{
-				imagedata[i * 3 + 0] = 255; // R
-				imagedata[i * 3 + 1] = 0;   // G
-				imagedata[i * 3 + 2] = 0;   // B
+			// - calculate the ray
+			float x = g_cam.nbl.x + ((j * g_cam.nbr.x) / (float)g_winWidth) * 2.0f;
+			float y = g_cam.nbl.y + ((i * g_cam.ntl.y) / (float)g_winHeight) * 2.0f;
+			vec4 v(x, y, -g_cam.near_plane, 0);
+			v = glm::normalize(v);
+
+			// - check for ray collisions with the boxes
+			for (int s = 0; s < g_box_num; s++) {
+
+				vec3* s_cols = FindCollisionBox((vec3)g_cam.eye, (vec3)v, g_boxes[s]);
+
+				if (s_cols != nullptr) {
+
+					// - calculate phong color
+					vec3 sp = normalize(g_light.pos - *s_cols);
+					vec3 n = normalize(*s_cols);
+					vec3 vp = normalize(*s_cols - vec3(g_cam.eye));
+					vec3 r = (n + n) * dot(n, sp) - sp;
+					float Ia = g_boxes[s].ambient;
+					float Id = g_light.intensity * g_boxes[s].diffuse * dot(sp,n);
+					float Is = g_light.intensity * g_boxes[s].phong * pow(dot(r,vp), 50);
+					vec3 color = (Ia + Id) * g_light.color * g_boxes[s].color + Is * g_light.color;
+
+					// - apply color to the image
+					imagedata[((i * g_winWidth) + j) * 3 + 0] = color.x * 255;   // R
+					imagedata[((i * g_winWidth) + j) * 3 + 1] = color.y * 255;   // G
+					imagedata[((i * g_winWidth) + j) * 3 + 2] = color.z * 255;   // B
+				}
 			}
-			else
-			{
-				imagedata[i * 3 + 0] = 0;   // R
-				imagedata[i * 3 + 1] = 0;   // G
-				imagedata[i * 3 + 2] = 0;   // B
+
+			// - find collisions with the spheres
+			for (int s = 0; s < g_sphere_num; s++) {
+
+				vec3* s_cols = FindCollisionSphere((vec3)g_cam.eye, (vec3)v, g_spheres[s]);
+
+				if (s_cols != nullptr) {
+
+					// - calculate phong color
+					vec3 sp = normalize(g_light.pos - *s_cols);
+					vec3 n = normalize(*s_cols);
+					vec3 vp = normalize(*s_cols - vec3(g_cam.eye));
+					vec3 r = (n + n) * dot(n, sp) - sp;
+					float Ia = g_spheres[s].ambient;
+					float Id = g_light.intensity * g_spheres[s].diffuse * dot(sp, n);
+					float Is = g_light.intensity * g_spheres[s].phong * pow(dot(r, vp), 50);
+					vec3 color = (Ia + Id) * g_light.color * g_spheres[s].color + Is * g_light.color;
+
+					// - apply color to the image
+					imagedata[((i * g_winWidth) + j) * 3 + 0] = color.x * 255;   // R
+					imagedata[((i * g_winWidth) + j) * 3 + 1] = color.y * 255;   // G
+					imagedata[((i * g_winWidth) + j) * 3 + 2] = color.z * 255;   // B
+				}
 			}
+			//cout << ind << endl;
+			//ind++;
 		}
-
-		
 	}
 
 	glGenTextures(1, &glTexID);
 	glBindTexture(GL_TEXTURE_2D, glTexID);
+	cout << "createtex " <<  glTexID << endl;
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -68,13 +106,13 @@ void createTexture()
 
 	// send the imagedata (on CPU) to the GPU memory at glTexID (glTexID is a GPU memory location index)
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, g_winWidth, g_winHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, imagedata);
-	drawPlane();
+	//drawPlane();
 }
 
-void initGLStuff(void)
+/*void initGLStuff(void)
 {
 	createTexture();
-}
+}*/
 
 void drawPlane()
 {
