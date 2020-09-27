@@ -38,11 +38,13 @@ extern vector<mat4> modelMat;
     */
     GLuint createMesh (const char* filename, const  char* v_shader_file, const char* f_shader_file);
 
-    void drawMesh(GLuint a_id, mat4 viewMat, mat4 projMat, vec3 lightPos, float time);
+    void drawMesh(GLuint a_id, mat4 viewMat, mat4 projMat, vec3 lightPos, float time, vec3 objPos);
 
 
 	void computeNormals(GLuint a_id); // compute both face and vertex normals
 	void prepareVBOandShaders(GLuint a_id, const char* v_shader_file, const char* f_shader_file);
+
+    void deleteMeshes();
 
 
 #endif

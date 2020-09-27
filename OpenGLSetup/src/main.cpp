@@ -29,6 +29,14 @@
 using namespace std;
 using namespace glm;
 
+struct GameObject
+{
+	GLuint mesh_id;
+	vec3 position;
+};
+
+vector<GameObject> gameObjects;
+
 int g_winWidth  = 1024;
 int g_winHeight = 512;
 
@@ -63,11 +71,14 @@ int f_count = 0;
 
 void initialization() 
 {    
-    g_cam.set(1.0f, 2.0f, 4.0f, 0.0f, 1.0f, -0.5f, g_winWidth, g_winHeight);
+    g_cam.set(1.0f, 2.0f, 4.0f, 0.0f, 1.0f, -0.5f, g_winWidth, g_winHeight, 45.f, 0.1f, 1000.f);
 	g_text.setColor(0.0f, 0.0f, 0.0f);
 
 	g_mesh = createMesh(meshFile, v_shader_file, f_shader_file);
 	// add any stuff you want to initialize ...
+	for (int i = -50; i < 50; i++)
+		for (int j = -50; j < 50; j++)
+			gameObjects.push_back({ g_mesh, vec3(i * 5, 0, j * 5) });
 }
 
 /****** GL callbacks ******/
@@ -85,11 +96,13 @@ void initialGL()
 	glLoadIdentity();
 }
 
+bool swapLight = false;
+
 void idle()
 {
     // add any stuff to update at runtime ....
 	f_count++;
-	elapsed += ((float)glutGet(GLUT_ELAPSED_TIME)) - g_time_start;
+	elapsed = ((float)glutGet(GLUT_ELAPSED_TIME)) - g_time_start;
 	if (elapsed >= 1000.f)
 	{
 		g_fps = (int)(f_count);
@@ -100,6 +113,22 @@ void idle()
 	/*float t = (float)glutGet(GLUT_ELAPSED_TIME) / 1000.0f;
 	g_fps = f_count / t;*/
 	//cout << "FPS: " << g_fps << endl;
+	if (swapLight)
+	{
+		g_lightPos.x -= 0.25f;
+		if (g_lightPos.x <= -10.f)
+		{
+			swapLight = false;
+		}
+	}
+	else
+	{
+		g_lightPos.x += 0.25f;
+		if (g_lightPos.x >= 10.f)
+		{
+			swapLight = true;
+		}
+	}
 
     g_cam.keyOperation(g_keyStates, g_winWidth, g_winHeight);
 
@@ -143,7 +172,16 @@ void display()
 	g_text.draw(10, 100, const_cast<char*>(str.c_str()), g_winWidth, g_winHeight);*/
 
 	g_time = (float)glutGet(GLUT_ELAPSED_TIME)/1000.0f;
-	drawMesh(g_mesh, g_cam.viewMat, g_cam.projMat, g_lightPos, g_time);
+	//mat4 og_model = modelMat[g_mesh];
+	
+	for (int i = 0; i < gameObjects.size(); i++)
+	{
+		float mag = length2((gameObjects[i].position - vec3(g_cam.eye)));
+		if(mag <= 10000.f)
+			drawMesh(gameObjects[i].mesh_id, g_cam.viewMat, g_cam.projMat, g_lightPos, g_time, gameObjects[i].position);
+		//modelMat[g_mesh] = translate(modelMat[g_mesh], vec3(i * 100, 0, 0));
+	}
+	//modelMat[g_mesh] = og_model;
 
     glutSwapBuffers();
 }
@@ -235,5 +273,8 @@ int main(int argc, char **argv)
 		glutMainLoopEvent();
 
 	}*/
+
+	deleteMeshes();
+
     return EXIT_SUCCESS;
 }

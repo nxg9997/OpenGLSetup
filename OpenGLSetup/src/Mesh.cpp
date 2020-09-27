@@ -109,6 +109,17 @@ void prepareVBOandShaders(GLuint a_id, const char* v_shader_file, const char* f_
 	glEnableVertexAttribArray(1);
 }
 
+void deleteMeshes()
+{
+	for (int i = 0; i < vertices.size(); i++)
+	{
+		delete[] vertices[i];
+		delete[] triangles[i];
+		delete[] fnormals[i];
+		delete[] vnormals[i];
+	}
+}
+
 GLuint createMesh(const char* filename, const char* v_shader_file, const char* f_shader_file) {
 
 	static int mesh_id = -1; mesh_id++;
@@ -178,7 +189,7 @@ GLuint createMesh(const char* filename, const char* v_shader_file, const char* f
 	return mesh_id;
 }
 
-void drawMesh(GLuint a_id, mat4 viewMat, mat4 projMat, vec3 lightPos, float time) {
+void drawMesh(GLuint a_id, mat4 viewMat, mat4 projMat, vec3 lightPos, float time, vec3 objPos) {
 
 	glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
@@ -197,7 +208,7 @@ void drawMesh(GLuint a_id, mat4 viewMat, mat4 projMat, vec3 lightPos, float time
 
 
 	glUseProgram(shaderProg[a_id]);
-	mat4 m = translate(mat4(1.0), vec3(0.0f, 2.0f, 0.0f));
+	mat4 m = translate(mat4(1.0), /*vec3(0.0f, 2.0f, 0.0f) +*/ objPos);
 	modelMat[a_id] = scale(m, vec3(0.3f, 0.3f, 0.3f));
 	setMatrix4fv(shaderProg[a_id], "modelMat", 1, value_ptr(modelMat[a_id]));
 	setMatrix4fv(shaderProg[a_id], "viewMat", 1, value_ptr(viewMat));
