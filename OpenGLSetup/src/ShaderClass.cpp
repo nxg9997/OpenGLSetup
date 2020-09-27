@@ -2,18 +2,27 @@
 #include <iostream>
 #include <GL/glew.h>
 using namespace std;
-ShaderClass::ShaderClass(void)
-{
-	id = 0;
-}
 
-ShaderClass::~ShaderClass(void)
-{
+vector<GLuint> vShader, fShader;
 
-}
-
-void ShaderClass::create(const char* shaderFileName, GLenum targetType)
+GLuint createShader(const char* shaderFileName, GLenum targetType)
 {
+	static GLuint vshader_id = -1;
+	static GLuint fshader_id = -1;
+
+	GLuint currID = -1;
+
+	if (targetType == GL_VERTEX_SHADER)
+	{
+		vshader_id++;
+		currID = vshader_id;
+	}
+	else if (targetType == GL_FRAGMENT_SHADER)
+	{
+		fshader_id++;
+		currID = fshader_id;
+	}
+
 	//  target types: GL_VERTEX_SHADER, GL_FRAGMENT_SHADER, GL_COMPUTE_SHADER
 	if (GLEW_ARB_vertex_shader && GLEW_ARB_fragment_shader)
 		cout<<"Ready for GLSL\n";
@@ -21,20 +30,29 @@ void ShaderClass::create(const char* shaderFileName, GLenum targetType)
 		cout<<"No GLSL support\n";
 		exit(1);
 	}
-	id = glCreateProgram();
+	//GLuint id = glCreateProgram();
 	char* source = NULL;
 	int status;
 	if (shaderFileName)
 	{
-		source = loadShaderFile(shaderFileName);
+		source = loadShaderFile(currID, shaderFileName);
 		if (source == NULL)
 		{
 			cout << "The shader of '"<< shaderFileName << "' isn't created!" << endl;
-			return;
+			return 0;
 		}
-		id = glCreateShader(targetType);
+		GLuint id = glCreateShader(targetType);
 		glShaderSource(id, 1, const_cast<const GLchar * *>(&source), NULL);
 		glCompileShader(id);
+
+		if (targetType == GL_VERTEX_SHADER)
+		{
+			vShader.push_back(id);
+		}
+		else if (targetType == GL_FRAGMENT_SHADER)
+		{
+			fShader.push_back(id);
+		}
 
 		glGetShaderiv(id, GL_COMPILE_STATUS, &status);
 		if (status != GL_TRUE)
@@ -44,8 +62,11 @@ void ShaderClass::create(const char* shaderFileName, GLenum targetType)
 		}
 
 		delete[] source;
+
+		
 	}
 	
+	return currID;
 
 	//glLinkProgram(id);
 
@@ -60,12 +81,19 @@ void ShaderClass::create(const char* shaderFileName, GLenum targetType)
 }
 
 // delete the shader after it's linked into a sahder program id, as it's no longer needed
-void ShaderClass::destroy() 
+void destroyShader(GLuint a_id, GLenum targetType)
 {
-	glDeleteShader(id);
+	if (targetType == GL_VERTEX_SHADER)
+	{
+		glDeleteShader(vShader[a_id]);
+	}
+	else if (targetType == GL_FRAGMENT_SHADER)
+	{
+		glDeleteShader(fShader[a_id]);
+	}
 }
 
-char* ShaderClass::loadShaderFile(const char* fn)
+char* loadShaderFile(GLuint a_id, const char* fn)
 {
 	ifstream file;
 	char* content = NULL;
@@ -134,7 +162,7 @@ char* ShaderClass::loadShaderFile(const char* fn)
 	//return content;
 }
 
-void ShaderClass::printShaderInfoLog(unsigned int shader_id)
+void printShaderInfoLog(unsigned int shader_id)
 {
 	int infoLogLen = 0;
 	int charsWritten = 0;

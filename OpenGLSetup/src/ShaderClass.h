@@ -5,25 +5,23 @@
 #include <string>
 #include <fstream>
 #include <iostream>
+#include <vector>
 
 using namespace std;
 
-class ShaderClass
-{
-public:
-	unsigned int id;
-	//unsigned int vShader, fShader, cShader;
-	//GLuint curAttributeLoc;
-public:
-	ShaderClass(void);
-	~ShaderClass(void);
-	void create(const char* shaderFileName, GLenum targetType);
-	void destroy(); 
+extern vector<GLuint> vShader, fShader;
 
-private:
-	char* loadShaderFile(const char* fn); // load the shader text file
+
+
+
+
+	GLuint createShader(const char* shaderFileName, GLenum targetType);
+	void destroyShader(GLuint a_id, GLenum targetType);
+
+
+	char* loadShaderFile(GLuint a_id, const char* fn); // load the shader text file
 	void printShaderInfoLog(unsigned int shader_id); // print the shader info log to the console
 
-};
+
 
 #endif

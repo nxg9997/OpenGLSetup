@@ -1,91 +1,88 @@
 #include "Mesh.h"
 
+vector<GLuint> vert_num, tri_num, vao, vbo, nbo, ibo;
+vector<vector<vec3>> vertices, fnormals, vnormals;
+vector<vector<uvec3>> triangles;
+vector<mat4> modelMat;
 
-Mesh::Mesh() 
+void computeNormals(GLuint a_id)
 {
-	vert_num = tri_num = 0;
-	vao = vbo = nbo = ibo = 0;
-	modelMat = mat4(1.0f); 
-}
-
-Mesh::~Mesh() 
-{
-	delete[] vertices;
-	delete[] triangles;
-	delete[] fnormals;
-	delete[] vnormals;
-}
-
-void Mesh::computeNormals()
-{
-	fnormals = new vec3[tri_num];
-	vnormals = new vec3[vert_num];
+	fnormals.push_back(vector<vec3>());
+	vnormals.push_back(vector<vec3>());
 
 	vec3 a, b, n;
 
 	// Compute face normals
-	for (unsigned int i = 0; i < tri_num; i++) {
+	for (unsigned int i = 0; i < tri_num[a_id]; i++) {
 		
-		a = vertices[triangles[i][1]] - vertices[triangles[i][0]];
-		b = vertices[triangles[i][2]] - vertices[triangles[i][0]];
+		a = vertices[a_id][triangles[a_id][i][1]] - vertices[a_id][triangles[a_id][i][0]];
+		b = vertices[a_id][triangles[a_id][i][2]] - vertices[a_id][triangles[a_id][i][0]];
 		
 		n = cross(a, b);
-		fnormals[i] = normalize(n);
+		fnormals[a_id].push_back(normalize(n));
 	}
 
 	// Compute vertex normals
-	for (unsigned int i = 0; i < vert_num; i++) {
-		vnormals[i] = vec3(0.0f);
+	for (unsigned int i = 0; i < vert_num[a_id]; i++) {
+		vnormals[a_id].push_back(vec3(0.0f));
 	}
 
-	for (unsigned int i = 0; i < tri_num; i++) {
+	for (unsigned int i = 0; i < tri_num[a_id]; i++) {
 		for (unsigned int j = 0; j < 3; j++) {
-			vnormals[triangles[i][j]] += fnormals[i];
+			vnormals[a_id][triangles[a_id][i][j]] += fnormals[a_id][i];
 		}
 	}
 
-	for (unsigned int i = 0; i < vert_num; i++) {
-		vnormals[i] = normalize(vnormals[i]);
+	for (unsigned int i = 0; i < vert_num[a_id]; i++) {
+		vnormals[a_id][i] = normalize(vnormals[a_id][i]);
 	}
 
 }
 
-void Mesh::prepareVBOandShaders(const char* v_shader_file, const char* f_shader_file)
+void prepareVBOandShaders(GLuint a_id, const char* v_shader_file, const char* f_shader_file)
 {
-	vShader.create(v_shader_file, GL_VERTEX_SHADER);
-	fShader.create(f_shader_file, GL_FRAGMENT_SHADER);
-	shaderProg.create();
+	GLuint vShader_id = createShader(v_shader_file, GL_VERTEX_SHADER);
+	GLuint fShader_id = createShader(f_shader_file, GL_FRAGMENT_SHADER);
+	//fShader.create(f_shader_file, GL_FRAGMENT_SHADER);
+	GLuint program_id = createProgram();
+	linkShader(program_id, vShader_id, GL_VERTEX_SHADER);
+	linkShader(program_id, fShader_id, GL_FRAGMENT_SHADER);
+	/*shaderProg.create();
 	shaderProg.link(vShader);
-	shaderProg.link(fShader);
+	shaderProg.link(fShader);*/
 
-	vShader.destroy();
-	fShader.destroy();
+	destroyShader(vShader_id, GL_VERTEX_SHADER);
+	destroyShader(fShader_id, GL_FRAGMENT_SHADER);
+	/*vShader.destroy();
+	fShader.destroy();*/
 
 	// create vbo 
+	vbo.push_back(0);
 	// generate a new VBO and get the associated ID
-	glGenBuffers(1, &vbo);
+	glGenBuffers(1, &vbo[a_id]);
 
 	// bind VBO in order to use
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo[a_id]);
 
 	// upload data to VBO - data went to GPU
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vec3) * vert_num, vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vec3) * vert_num[a_id], &vertices[a_id], GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0); // clean up
 	// delete[] vertices; // commented out, since it's handled by the destructor
 
 
 	// repeat for normals and indices
-	
-	glGenBuffers(1, &nbo);
-	glBindBuffer(GL_ARRAY_BUFFER, nbo);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vec3) * vert_num, vnormals, GL_STATIC_DRAW);
+	nbo.push_back(0);
+	glGenBuffers(1, &nbo[a_id]);
+	glBindBuffer(GL_ARRAY_BUFFER, nbo[a_id]);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vec3) * vert_num[a_id], &vnormals[a_id], GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0); // clean up
 	// delete[] vnormals; // commented out, since it's handled by the destructor
 
-	glGenBuffers(1, &ibo);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uvec3) * tri_num, triangles, GL_STATIC_DRAW);
+	ibo.push_back(0);
+	glGenBuffers(1, &ibo[a_id]);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo[a_id]);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uvec3) * tri_num[a_id], &triangles[a_id], GL_STATIC_DRAW);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); // clean up
 	// delete[] triangles; // commented out, since it's handled by the destructor
 	
@@ -98,11 +95,12 @@ void Mesh::prepareVBOandShaders(const char* v_shader_file, const char* f_shader_
 	// The purpose of VAO is to have vertices and normal vectors as separate attributes in the vertex shader. 
 	// So VAO's attrobites point to these data on the GPU, rather than referring back to any CPU data. 
 
-	glGenVertexArrays(1, &vao);
-	glBindVertexArray(vao);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	vao.push_back(0);
+	glGenVertexArrays(1, &vao[a_id]);
+	glBindVertexArray(vao[a_id]);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo[a_id]);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL); // 0 - the layout id in vertex shader
-	glBindBuffer(GL_ARRAY_BUFFER, nbo);
+	glBindBuffer(GL_ARRAY_BUFFER, nbo[a_id]);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, NULL); // 1 - the layout id in fragment shader
 
 	// Ettributes are disabled by default in OpenGL 4. 
@@ -111,7 +109,11 @@ void Mesh::prepareVBOandShaders(const char* v_shader_file, const char* f_shader_
 	glEnableVertexAttribArray(1);
 }
 
-void Mesh::create(const char* filename, const char* v_shader_file, const char* f_shader_file) {
+GLuint createMesh(const char* filename, const char* v_shader_file, const char* f_shader_file) {
+
+	static int mesh_id = -1; mesh_id++;
+
+	modelMat.push_back(mat4());
 
 	vector<vec3> ori_vertices;
 	vector<uvec3> ori_triangles;
@@ -156,30 +158,32 @@ void Mesh::create(const char* filename, const char* v_shader_file, const char* f
     }
     fs.close();
 
-	vert_num = ori_vertices.size();
-	tri_num = ori_triangles.size();
-	vertices = new vec3[vert_num];
-	triangles = new uvec3[tri_num];
+	vert_num.push_back(ori_vertices.size());
+	tri_num.push_back(ori_triangles.size());
+	vertices.push_back(vector<vec3>());
+	triangles.push_back(vector<uvec3>());
 
 	// Use arrays to store vertices and triangles, instead of using c++ vectors.
 	// This is because we have to use arrays when sending data to GPUs. 
-	for (uint i = 0; i < vert_num; i++) {
-		vertices[i] = ori_vertices[i];
+	for (uint i = 0; i < vert_num[mesh_id]; i++) {
+		vertices[mesh_id].push_back(ori_vertices[i]);
 	}
-	for (uint i = 0; i < tri_num; i++) {
-		triangles[i] = ori_triangles[i];
+	for (uint i = 0; i < tri_num[mesh_id]; i++) {
+		triangles[mesh_id].push_back(ori_triangles[i]);
 	}
 	
-	computeNormals();
-	prepareVBOandShaders(v_shader_file, f_shader_file);
+	computeNormals(mesh_id);
+	prepareVBOandShaders(mesh_id, v_shader_file, f_shader_file);
+
+	return mesh_id;
 }
 
-void Mesh::draw(mat4 viewMat, mat4 projMat, vec3 lightPos, float time) {
+void drawMesh(GLuint a_id, mat4 viewMat, mat4 projMat, vec3 lightPos, float time) {
 
 	glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
 	
-	if (vert_num <= 0 && tri_num <= 0)
+	if (vert_num[a_id] <= 0 && tri_num[a_id] <= 0)
 		return;
 
 	glEnable(GL_DEPTH_TEST);
@@ -192,21 +196,21 @@ void Mesh::draw(mat4 viewMat, mat4 projMat, vec3 lightPos, float time) {
 	glPushMatrix();
 
 
-	glUseProgram(shaderProg.id);
+	glUseProgram(shaderProg[a_id]);
 	mat4 m = translate(mat4(1.0), vec3(0.0f, 2.0f, 0.0f));
-	modelMat = scale(m, vec3(0.3f, 0.3f, 0.3f));
-	shaderProg.setMatrix4fv("modelMat", 1, value_ptr(modelMat));
-	shaderProg.setMatrix4fv("viewMat", 1, value_ptr(viewMat));
-	shaderProg.setMatrix4fv("projMat", 1, value_ptr(projMat));
-	shaderProg.setFloat3V("lightPos", 1, value_ptr(lightPos));
-	shaderProg.setFloat("time", time);
+	modelMat[a_id] = scale(m, vec3(0.3f, 0.3f, 0.3f));
+	setMatrix4fv(shaderProg[a_id], "modelMat", 1, value_ptr(modelMat[a_id]));
+	setMatrix4fv(shaderProg[a_id], "viewMat", 1, value_ptr(viewMat));
+	setMatrix4fv(shaderProg[a_id], "projMat", 1, value_ptr(projMat));
+	setFloat3V(shaderProg[a_id], "lightPos", 1, value_ptr(lightPos));
+	setFloat(shaderProg[a_id], "time", time);
 
 	//cout << glm::to_string(modelMat) << endl;
 	//cout << glm::to_string(viewMat) << endl;
 	//cout << glm::to_string(projMat) << endl;
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-	glDrawElements(GL_TRIANGLES, tri_num * 3, GL_UNSIGNED_INT, NULL);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo[a_id]);
+	glDrawElements(GL_TRIANGLES, tri_num[a_id] * 3, GL_UNSIGNED_INT, NULL);
 
 	glPopMatrix();
 	glDisable(GL_POLYGON_OFFSET_FILL);

@@ -50,7 +50,7 @@ char f_shader_file[] =
  ".\\shaders\\toon_shading.frag"; // basic toon shading with per-fragment implementation
 
 const char meshFile[128] = "Mesh/sphere.obj";
-Mesh g_mesh;
+GLuint g_mesh;
 
 vec3 g_lightPos = vec3(3, 3, 3);
 float g_time = 0.0f;
@@ -66,7 +66,7 @@ void initialization()
     g_cam.set(1.0f, 2.0f, 4.0f, 0.0f, 1.0f, -0.5f, g_winWidth, g_winHeight);
 	g_text.setColor(0.0f, 0.0f, 0.0f);
 
-	g_mesh.create(meshFile, v_shader_file, f_shader_file);
+	g_mesh = createMesh(meshFile, v_shader_file, f_shader_file);
 	// add any stuff you want to initialize ...
 }
 
@@ -136,14 +136,14 @@ void display()
 	}
 	str = "FPS: " + std::to_string(g_fps);
 	g_text.draw(10, 45, const_cast<char*>(str.c_str()), g_winWidth, g_winHeight);
-	str = "triangle count: " + std::to_string(g_mesh.tri_num);
+	str = "triangle count: " + std::to_string(tri_num[g_mesh]);
 	g_text.draw(10, 60, const_cast<char*>(str.c_str()), g_winWidth, g_winHeight);
 		
 	/*str = "FPS: " + g_fps;
 	g_text.draw(10, 100, const_cast<char*>(str.c_str()), g_winWidth, g_winHeight);*/
 
 	g_time = (float)glutGet(GLUT_ELAPSED_TIME)/1000.0f;
-	g_mesh.draw(g_cam.viewMat, g_cam.projMat, g_lightPos, g_time);
+	drawMesh(g_mesh, g_cam.viewMat, g_cam.projMat, g_lightPos, g_time);
 
     glutSwapBuffers();
 }

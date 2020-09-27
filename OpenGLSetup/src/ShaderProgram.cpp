@@ -2,38 +2,35 @@
 #include <iostream>
 #include <GL/glew.h>
 using namespace std;
-ShaderProgram::ShaderProgram(void)
+
+vector<GLuint> shaderProg;
+
+GLuint createProgram()
 {
-	id = 0;
+	static GLuint program_id = -1; program_id++;
+
+	shaderProg.push_back(glCreateProgram());
+
+	return program_id;
 }
 
-ShaderProgram::~ShaderProgram(void)
+void linkShader(GLuint a_id, GLuint a_sid, GLenum targetType)
 {
-
-}
-
-void ShaderProgram::create()
-{
-	id = glCreateProgram();
-}
-
-void ShaderProgram::link(ShaderClass shader)
-{
-	glAttachShader(id, shader.id);
-	glLinkProgram(id);
+	glAttachShader(a_id, a_sid);
+	glLinkProgram(a_id);
 
 	int status;
-	glGetProgramiv(id, GL_LINK_STATUS, &status);
+	glGetProgramiv(a_id, GL_LINK_STATUS, &status);
 	if (status != GL_TRUE) 
 	{
-		printProgramInfoLog(id);
+		printProgramInfoLog(a_id);
 		return;
 	}
 }
 
-void ShaderProgram::setInt(const char* name, int value)
+void setInt(GLuint a_id, const char* name, int value)
 {
-	unsigned int loc = glGetUniformLocation(id, name);
+	unsigned int loc = glGetUniformLocation(a_id, name);
 	if (loc == -1) {
 		return;
 		//cout << "Uniform integer: " << name <<"doesn't exist."<< endl;
@@ -44,9 +41,9 @@ void ShaderProgram::setInt(const char* name, int value)
 }
 
 
-void ShaderProgram::setFloat(const char* name, float value)
+void setFloat(GLuint a_id, const char* name, float value)
 {
-	unsigned int loc = glGetUniformLocation(id, name);
+	unsigned int loc = glGetUniformLocation(a_id, name);
 	if (loc == -1) {
 		return;
 		//cout << "Uniform float: " << name <<" doesn't exist."<< endl;
@@ -55,9 +52,9 @@ void ShaderProgram::setFloat(const char* name, float value)
 		glUniform1f(loc, value);
 	}
 }
-void ShaderProgram::setFloat1V(const char* name, unsigned int count, const float* floatPtr)
+void setFloat1V(GLuint a_id, const char* name, unsigned int count, const float* floatPtr)
 {
-	unsigned int loc = glGetUniformLocation(id, name);
+	unsigned int loc = glGetUniformLocation(a_id, name);
 	if (loc == -1) {
 		return;
 		//cout << "Uniform float1 vector: " << name << " doesn't exist."<<endl;
@@ -67,9 +64,9 @@ void ShaderProgram::setFloat1V(const char* name, unsigned int count, const float
 	}
 }
 
-void ShaderProgram::setFloat3V(const char* name, unsigned int count, const float* floatPtr)
+void setFloat3V(GLuint a_id, const char* name, unsigned int count, const float* floatPtr)
 {
-	unsigned int loc = glGetUniformLocation(id, name);
+	unsigned int loc = glGetUniformLocation(a_id, name);
 	if (loc == -1) {
 		return;
 		//cout << "Uniform float3 vector: " << name << " doesn't exist." << endl;
@@ -79,9 +76,9 @@ void ShaderProgram::setFloat3V(const char* name, unsigned int count, const float
 	}
 }
 
-void ShaderProgram::setMatrix4fv(const char* name, unsigned int count, const float* floatPtr)
+void setMatrix4fv(GLuint a_id, const char* name, unsigned int count, const float* floatPtr)
 {
-	unsigned int loc = glGetUniformLocation(id, name);
+	unsigned int loc = glGetUniformLocation(a_id, name);
 	if (loc == -1) {
 		return;
 		//cout << "Uniform matrix: " << name << " doesn't exist."<<endl;
@@ -91,7 +88,7 @@ void ShaderProgram::setMatrix4fv(const char* name, unsigned int count, const flo
 	}
 }
 
-void ShaderProgram::printProgramInfoLog (unsigned int prog_id)
+void printProgramInfoLog (unsigned int prog_id)
 {
 	int infoLogLen = 0;
 	int charsWritten = 0;
@@ -109,7 +106,7 @@ void ShaderProgram::printProgramInfoLog (unsigned int prog_id)
 }
 
 // setup shader sampler texture data 
-void ShaderProgram::createDataTexture(unsigned int& pGLTexID, float* pData, unsigned int pMaxWidth, unsigned int pMaxHeight)
+void createDataTexture(unsigned int& pGLTexID, float* pData, unsigned int pMaxWidth, unsigned int pMaxHeight)
 {
 
 	glGenTextures(1, &pGLTexID);
@@ -129,9 +126,9 @@ void ShaderProgram::createDataTexture(unsigned int& pGLTexID, float* pData, unsi
 	glDisable(GL_TEXTURE_2D);
 }
 
-void ShaderProgram::setSampler(const char* sampleName, GLuint textureUnit)
+void setSampler(GLuint a_id, const char* sampleName, GLuint textureUnit)
 {
-	GLint samplerLocation = glGetUniformLocation(id, sampleName);
+	GLint samplerLocation = glGetUniformLocation(a_id, sampleName);
 	glUniform1i(samplerLocation, textureUnit);
 }
 
