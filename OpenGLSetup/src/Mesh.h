@@ -23,8 +23,8 @@ using namespace std;
 using namespace glm;
 
 extern vector<GLuint> vert_num, tri_num, vao, vbo, nbo, ibo;
-extern vector<vector<vec3>> vertices, fnormals, vnormals;
-extern vector<vector<uvec3>> triangles;
+extern vector<vec3*> vertices, fnormals, vnormals;
+extern vector<uvec3*> triangles;
 extern vector<mat4> modelMat;
 
 

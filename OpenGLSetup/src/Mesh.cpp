@@ -1,14 +1,14 @@
 #include "Mesh.h"
 
 vector<GLuint> vert_num, tri_num, vao, vbo, nbo, ibo;
-vector<vector<vec3>> vertices, fnormals, vnormals;
-vector<vector<uvec3>> triangles;
+vector<vec3*> vertices, fnormals, vnormals;
+vector<uvec3*> triangles;
 vector<mat4> modelMat;
 
 void computeNormals(GLuint a_id)
 {
-	fnormals.push_back(vector<vec3>());
-	vnormals.push_back(vector<vec3>());
+	fnormals.push_back(new vec3[tri_num[a_id]]);
+	vnormals.push_back(new vec3[vert_num[a_id]]);
 
 	vec3 a, b, n;
 
@@ -19,12 +19,12 @@ void computeNormals(GLuint a_id)
 		b = vertices[a_id][triangles[a_id][i][2]] - vertices[a_id][triangles[a_id][i][0]];
 		
 		n = cross(a, b);
-		fnormals[a_id].push_back(normalize(n));
+		fnormals[a_id][i] = normalize(n);
 	}
 
 	// Compute vertex normals
 	for (unsigned int i = 0; i < vert_num[a_id]; i++) {
-		vnormals[a_id].push_back(vec3(0.0f));
+		vnormals[a_id][i] = vec3(0.0f);
 	}
 
 	for (unsigned int i = 0; i < tri_num[a_id]; i++) {
@@ -45,8 +45,8 @@ void prepareVBOandShaders(GLuint a_id, const char* v_shader_file, const char* f_
 	GLuint fShader_id = createShader(f_shader_file, GL_FRAGMENT_SHADER);
 	//fShader.create(f_shader_file, GL_FRAGMENT_SHADER);
 	GLuint program_id = createProgram();
-	linkShader(program_id, vShader_id, GL_VERTEX_SHADER);
-	linkShader(program_id, fShader_id, GL_FRAGMENT_SHADER);
+	linkShader(shaderProg[program_id], vShader[vShader_id], GL_VERTEX_SHADER);
+	linkShader(shaderProg[program_id], fShader[fShader_id], GL_FRAGMENT_SHADER);
 	/*shaderProg.create();
 	shaderProg.link(vShader);
 	shaderProg.link(fShader);*/
@@ -65,7 +65,7 @@ void prepareVBOandShaders(GLuint a_id, const char* v_shader_file, const char* f_
 	glBindBuffer(GL_ARRAY_BUFFER, vbo[a_id]);
 
 	// upload data to VBO - data went to GPU
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vec3) * vert_num[a_id], &vertices[a_id], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vec3) * vert_num[a_id], vertices[a_id], GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0); // clean up
 	// delete[] vertices; // commented out, since it's handled by the destructor
@@ -75,14 +75,14 @@ void prepareVBOandShaders(GLuint a_id, const char* v_shader_file, const char* f_
 	nbo.push_back(0);
 	glGenBuffers(1, &nbo[a_id]);
 	glBindBuffer(GL_ARRAY_BUFFER, nbo[a_id]);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vec3) * vert_num[a_id], &vnormals[a_id], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vec3) * vert_num[a_id], vnormals[a_id], GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0); // clean up
 	// delete[] vnormals; // commented out, since it's handled by the destructor
 
 	ibo.push_back(0);
 	glGenBuffers(1, &ibo[a_id]);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo[a_id]);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uvec3) * tri_num[a_id], &triangles[a_id], GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uvec3) * tri_num[a_id], triangles[a_id], GL_STATIC_DRAW);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); // clean up
 	// delete[] triangles; // commented out, since it's handled by the destructor
 	
@@ -160,16 +160,16 @@ GLuint createMesh(const char* filename, const char* v_shader_file, const char* f
 
 	vert_num.push_back(ori_vertices.size());
 	tri_num.push_back(ori_triangles.size());
-	vertices.push_back(vector<vec3>());
-	triangles.push_back(vector<uvec3>());
+	vertices.push_back(new vec3[ori_vertices.size()]);
+	triangles.push_back(new uvec3[ori_triangles.size()]);
 
 	// Use arrays to store vertices and triangles, instead of using c++ vectors.
 	// This is because we have to use arrays when sending data to GPUs. 
 	for (uint i = 0; i < vert_num[mesh_id]; i++) {
-		vertices[mesh_id].push_back(ori_vertices[i]);
+		vertices[mesh_id][i] = ori_vertices[i];
 	}
 	for (uint i = 0; i < tri_num[mesh_id]; i++) {
-		triangles[mesh_id].push_back(ori_triangles[i]);
+		triangles[mesh_id][i] = ori_triangles[i];
 	}
 	
 	computeNormals(mesh_id);

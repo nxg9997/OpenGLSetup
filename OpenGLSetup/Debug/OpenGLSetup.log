@@ -1,6 +1,2 @@
 ﻿  Mesh.cpp
-  ShaderClass.cpp
-D:\Projects\OpenGLDoD\OpenGLSetup\src\ShaderClass.cpp(114,20): warning C4244: 'initializing': conversion from 'std::streamoff' to 'unsigned long', possible loss of data
-  ShaderProgram.cpp
-  Generating Code...
-  OpenGLSetup.vcxproj -> D:\Projects\OpenGLDoD\Debug\OpenGLSetup.exe
+  OpenGLSetup.vcxproj -> E:\Projects\OpenGLLearning\Debug\OpenGLSetup.exe
